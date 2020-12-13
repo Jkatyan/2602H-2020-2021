@@ -322,10 +322,12 @@ void initialize() {
 	pros::Task intake_task (intakeTask);
 	pros::Task conveyor_task (conveyorTask);
 
-	gen("Ball1", 39_in, 0_in, 0_deg);
-	gen("Goal2", 18.3_in, 0_in, 0_deg);
+	gen("Ball1", 38.5_in, 0_in, 0_deg);
+	gen("Goal2", 18.4_in, 0_in, 0_deg);
 	gen("BackOut", 2.9_ft, 0_in, 0_deg);
-	gen("FarGoal", 8.5_ft, -1_ft, -45_deg);
+	gen("FarGoal", 7_ft, 0_ft, 0_deg);
+	gen("FarGoalBlue", 5.7_ft, 0_ft, 0_deg);
+
 }
 
 void disabled() {}
@@ -354,35 +356,41 @@ void skills(){
 	setStateConveyor(3);
 
 	run("BackOut", true); //Back Out
-	gen("Ball2", 2.93_ft, 0_ft, 0_deg);
+	gen("Ball2", 2.7_ft, 0_ft, 0_deg);
 	finishRun("BackOut");
 	profilePosTurn(164, true, 150);
 
 	setStateConveyor(3); //Ball
 	setStateIntakes(1);
 	run("Ball2", false);
-	gen("Goal3", 2.6_ft, 0_ft, 0_deg);
+	gen("Goal3", 2.68_ft, 0_ft, 0_deg);
 	finishRun("Ball2");
 
 	profilePosTurn(-121, true, 150);
 
 	run("Goal3", false); //Goal
-	gen("BackOut2", 3_ft, 0_ft, 0_deg);
-	pros::delay(1400);
-	setStateIntakes(0);
+	gen("BackOut2", 3.15_ft, 0_ft, 0_deg);
+
 	finishRun("Goal3");
 
 	setStateIntakes(0); //Score
 	setStateConveyor(1);
-	pros::delay(400);
+	pros::delay(300);
 	setStateConveyor(3);
 
 	run("BackOut2", true); //Back Out
-	gen("Goal4", 5.8_ft, 0_ft, 0_deg);
+	gen("Goal4", 6.2_ft, 0_ft, 0_deg);
 	finishRun("BackOut2");
 
-	profilePosTurn(68, true, 150); //Goal 4
+	setStateIntakes(2);
+	setStateConveyor(2);
+	pros::delay(300);
+	setStateIntakes(0);
+	setStateConveyor(3);
+
+	profilePosTurn(59.5, true, 150); //Goal 4
 	run("Goal4", false);
+	gen("BackOut3", 4.2_ft, 0_ft, 0_deg);
 	finishRun("Goal4");
 
 	setStateIntakes(0); //Score
@@ -390,48 +398,185 @@ void skills(){
 	pros::delay(400);
 	setStateConveyor(3);
 
-}
+	run("BackOut3", true); //Back out
+	gen("Ball4", 1.6_ft, 0_ft, 0_deg);
+	finishRun("BackOut3");
 
-void red(){
-	setStateConveyor(2); //Deploy
-	pros::delay(200);
-	setStateConveyor(0);
-
-	run("A", false); //Ball 1
-	finishRun("A");
-
-	profilePosTurn(-82, true, 150);
-
+	profilePosTurn(134, true, 150); //Ball 4
 	setStateIntakes(1);
-	setStateConveyor(3);
-	run("B", false);
-	finishRun("B");
+	run("Ball4", false);
+	gen("Goal5", 3.4_ft, 0_ft, 0_deg);
+	finishRun("Ball4");
+
+	profilePosTurn(-90, true, 150); //Goal 5
+	setStateIntakes(0);
+	run("Goal5", false);
+	gen("BackOut5", 3_ft, 0_ft, 0_deg);
+	finishRun("Goal5");
 
 	setStateIntakes(0); //Score
 	setStateConveyor(1);
-	pros::delay(300);
+	pros::delay(400);
 	setStateConveyor(3);
 
-	run("C", true); //Back Out
+	run("BackOut5", true); //Back out
+	finishRun("BackOut4");
+
+}
+
+void redHome(){
+	setStateConveyor(1);
+	pros::delay(200);
+
+	setStateConveyor(3);
+	setStateIntakes(1);
+
+	run("Ball1", false); //Ball 1
+	finishRun("Ball1");
+
+	profilePosTurn(-83, true, 150);
+
+	run("Goal2", false);
+	finishRun("Goal2");
+
+	setStateIntakes(0); //Score
+	setStateConveyor(1);
+	pros::delay(600);
+	setStateConveyor(3);
+
+	run("BackOut", true); //Back Out
+	gen("Ball2", 2.7_ft, 0_ft, 0_deg);
+	finishRun("BackOut");
 	profilePosTurn(-130, true, 150);
 
 	setStateIntakes(1);
-	run("D", false);
-	finishRun("D");
+	run("FarGoal", false);
+	gen("Goal3", 3_ft, 0_ft, 0_deg);
+	finishRun("FarGoal");
+
+	profilePosTurn(45, true, 150);
+	run("Goal3", false);
+	gen("BackOut2", 3_ft, 0_ft, 0_deg);
+	finishRun("Goal3");
+
+	setStateIntakes(1);
+	pros::delay(300);
 
 	setStateIntakes(0); //Score
 	setStateConveyor(1);
-	pros::delay(300);
+	pros::delay(800);
 	setStateConveyor(3);
 
-	run("C", true); //Back Out
+	run("BackOut2", true); //Back Out
 	setStateIntakes(0);
 	setStateConveyor(0);
 
 }
 
+void red2(){
+	setStateConveyor(1);
+	pros::delay(200);
+
+	setStateConveyor(3);
+	setStateIntakes(1);
+
+	run("Ball1", false); //Ball 1
+	finishRun("Ball1");
+
+	profilePosTurn(-83, true, 150);
+
+	run("Goal2", false);
+	finishRun("Goal2");
+
+	setStateIntakes(0); //Score
+	setStateConveyor(1);
+	pros::delay(600);
+	setStateConveyor(3);
+
+	run("BackOut", true); //Back Out
+	finishRun("BackOut");
+
+	setStateIntakes(0);
+	setStateConveyor(0);
+}
+
+void blue2(){
+	setStateConveyor(1);
+	pros::delay(200);
+
+	setStateConveyor(3);
+	setStateIntakes(1);
+
+	run("Ball1", false); //Ball 1
+	finishRun("Ball1");
+
+	profilePosTurn(75, true, 150);
+
+	run("Goal2", false);
+	finishRun("Goal2");
+
+	setStateIntakes(0); //Score
+	setStateConveyor(1);
+	pros::delay(600);
+	setStateConveyor(3);
+
+	run("BackOut", true); //Back Out
+	gen("Ball2", 2.7_ft, 0_ft, 0_deg);
+	finishRun("BackOut");
+	profilePosTurn(138, true, 150);
+
+	setStateIntakes(1);
+	run("FarGoalBlue", false);
+	gen("Goal3", 3.4_ft, 0_ft, 0_deg);
+	finishRun("FarGoalBlue");
+
+	profilePosTurn(-67, true, 150);
+	run("Goal3", false);
+	gen("BackOut2", 3_ft, 0_ft, 0_deg);
+	finishRun("Goal3");
+
+	setStateIntakes(1);
+	pros::delay(300);
+
+	setStateIntakes(0); //Score
+	setStateConveyor(1);
+	pros::delay(800);
+	setStateConveyor(3);
+
+	run("BackOut2", true); //Back Out
+	setStateIntakes(0);
+	setStateConveyor(0);
+
+}
+
+void blueHome(){
+	setStateConveyor(1);
+	pros::delay(200);
+
+	setStateConveyor(3);
+	setStateIntakes(1);
+
+	run("Ball1", false); //Ball 1
+	finishRun("Ball1");
+
+	profilePosTurn(75, true, 150);
+
+	run("Goal2", false);
+	finishRun("Goal2");
+
+	setStateIntakes(0); //Score
+	setStateConveyor(1);
+	pros::delay(600);
+	setStateConveyor(3);
+
+	run("BackOut", true); //Back Out
+	finishRun("BackOut");
+
+	setStateIntakes(0);
+	setStateConveyor(0);
+}
+
 void autonomous() {
-	skills();
 	pros::delay(60000);
 }
 

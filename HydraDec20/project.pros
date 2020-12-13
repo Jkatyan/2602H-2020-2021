@@ -304,6 +304,11 @@
                 "version": "4.1.0"
             }
         },
-        "upload_options": {}
+        "upload_options": {
+            "compress_bin": true,
+            "description": "",
+            "remote_name": "NO AUTON",
+            "slot": 6
+        }
     }
 }
