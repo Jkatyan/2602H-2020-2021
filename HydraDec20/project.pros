@@ -307,8 +307,8 @@
         "upload_options": {
             "compress_bin": true,
             "description": "",
-            "remote_name": "NO AUTON",
-            "slot": 6
+            "remote_name": "RED HOME",
+            "slot": 1
         }
     }
 }

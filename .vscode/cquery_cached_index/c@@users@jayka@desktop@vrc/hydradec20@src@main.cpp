@@ -29,11 +29,12 @@ int conveyorMode;
 bool bottom, middle, top, max;
 
 void autoIndexing(){
-	(frontLine.get_value()<=2800)?bottom = true:bottom = false;
-	(middleLine.get_value()<=500)?middle = true:middle = false;
-	(topLine.get_value()<=2870)?top = true:top = false;
-	(maxLine.get_value()<=2870)?max = true:max = false;
+	(frontLine.get_value()>=500)?bottom = true:bottom = false;
+	(middleLine.get_value()>=200)?middle = true:middle = false;
+	(topLine.get_value()>=130)?top = true:top = false;
+	(maxLine.get_value()<=1400)?max = true:max = false;
 
+	/*
 	if(max && !bottom){
 		rollerA.move(0);
 		rollerB.move(0);
@@ -44,7 +45,7 @@ void autoIndexing(){
 		right_mtr.move(-60);
 		left_mtr.move(-60);
 	}
-	else if(!top && !middle && bottom){
+	else */if(!top && !middle && bottom){
 		rollerA.move(100);
 		rollerB.move(100);
 	}
@@ -427,6 +428,8 @@ void skills(){
 void redHome(){
 	setStateConveyor(1);
 	pros::delay(200);
+	setStateConveyor(2);
+	pros::delay(200);
 
 	setStateConveyor(3);
 	setStateIntakes(1);
@@ -447,7 +450,7 @@ void redHome(){
 	run("BackOut", true); //Back Out
 	gen("Ball2", 2.7_ft, 0_ft, 0_deg);
 	finishRun("BackOut");
-	profilePosTurn(-130, true, 150);
+	profilePosTurn(-150, true, 150);
 
 	setStateIntakes(1);
 	run("FarGoal", false);
@@ -483,7 +486,7 @@ void red2(){
 	run("Ball1", false); //Ball 1
 	finishRun("Ball1");
 
-	profilePosTurn(-83, true, 150);
+	profilePosTurn(-86, true, 150);
 
 	run("Goal2", false);
 	finishRun("Goal2");
@@ -500,7 +503,7 @@ void red2(){
 	setStateConveyor(0);
 }
 
-void blue2(){
+void blueHome(){
 	setStateConveyor(1);
 	pros::delay(200);
 
@@ -549,7 +552,7 @@ void blue2(){
 
 }
 
-void blueHome(){
+void blue2(){
 	setStateConveyor(1);
 	pros::delay(200);
 
@@ -577,6 +580,7 @@ void blueHome(){
 }
 
 void autonomous() {
+	red2();
 	pros::delay(60000);
 }
 
