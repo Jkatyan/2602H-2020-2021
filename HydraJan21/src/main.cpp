@@ -67,6 +67,9 @@ pros::Optical optical(OPTICAL_PORT);
 pros::Imu imu (IMU_PORT);
 pros::Vision vision (VISION_PORT);
 
+pros::vision_object_s_t obj;
+pros::vision_signature_s_t RED_SIG = {1, {1, 0, 0}, 3.000000, 6335, 7645, 6990, -541, 431, -56, 4598058, 0};
+
 //HELPER FUNCTIONS
 void brake(){
 	LF.move_velocity(0);
@@ -224,6 +227,19 @@ void rollerOp(){
 	}
 }
 
+//VISION FUNCTIONS
+bool detectRedBall() {
+
+}
+
+bool detectBlueBall() {
+
+}
+
+bool detectFlag() {
+
+}
+
 //DRIVE FUNCTIONS
 void driveOp(){
 	set_drive(master.get_analog(ANALOG_LEFT_Y), master.get_analog(ANALOG_RIGHT_Y));
@@ -243,6 +259,66 @@ void drive(int target, float angle, int time, float correctionStrength, float sp
 	  driveEnc = -enc.get_value();
 	  float driveVal = pidCalculate(drivePID, target, driveEnc)*speed;
 		float angleVal = pidCalculate(anglePID, angle, getRotation())*correctionStrength;
+
+	  float rightVal = driveVal - angleVal;
+	  float leftVal = driveVal + angleVal;
+
+		if (direction == 1){
+			set_drive(leftVal + DRIVEF, rightVal + DRIVEF);
+			if(driveEnc >= target || ((pros::millis()-startTime) == time)){
+		     atTarget = 1;
+			}
+		}
+		else{
+			set_drive(leftVal - DRIVEF, rightVal - DRIVEF);
+			if(driveEnc <= target || ((pros::millis()-startTime) == time)){
+		     atTarget = 1;
+			}
+		}
+    pros::delay(20);
+  }
+}
+
+void track(int target, int sig, int time, float speed){
+  int atTarget = 0;
+  float driveEnc = -enc.get_value();
+	int direction = 1;
+  int startTime = pros::millis();
+
+	if (driveEnc > target){
+		direction = -1;
+	}
+
+  while ((atTarget != 1) || (pros::millis()-startTime) < time) {
+		int angleVal = 0;
+		if(vision.get_object_count() > 0){
+			obj = vision.get_by_size(0); // Get largest object visible
+			if(obj.signature == sig){
+				if(abs(obj.x_middle_coord) <= 20){
+					angleVal = 0;
+				}
+				else if(abs(obj.x_middle_coord) <= 25){
+					angleVal = 15;
+				}
+				else if(abs(obj.x_middle_coord) <= 30){
+					angleVal = 20;
+				}
+				else if(abs(obj.x_middle_coord) <= 35){
+					angleVal = 25;
+				}
+				else if(abs(obj.x_middle_coord) <= 40){
+					angleVal = 30;
+				}
+				else{
+					angleVal = 35;
+				}
+				if(obj.x_middle_coord < 0){
+					angleVal *= -1;
+				}
+			}
+		}
+	  driveEnc = -enc.get_value();
+	  float driveVal = pidCalculate(drivePID, target, driveEnc)*speed;
 
 	  float rightVal = driveVal - angleVal;
 	  float leftVal = driveVal + angleVal;
@@ -321,7 +397,9 @@ void initialize() {
 	initRollers();
 
 	//SENSORS
+	vision.set_signature(1, &RED_SIG);
 	vision.clear_led();
+	vision.set_zero_point(pros::E_VISION_ZERO_CENTER);
 	enc.reset();
 }
 
@@ -334,7 +412,8 @@ void autonomous() {
 	turnPID = pidInit (TURNP, 0, TURND, 0, 10.0, 99999, 99999);
 	anglePID = pidInit (ANGLEP, 0, 0, 0, 10.0, 99999, 99999);
 
-	drive(2000, 0, 5000, 1, 1);
+	set_intakes(127);
+	track(3000, 1, 6000, 1);
 }
 
 void opcontrol() {
@@ -344,6 +423,15 @@ void opcontrol() {
 		rollerOp();
 		pros::lcd::print(2, "%d", enc.get_value());
 		pros::lcd::print(3, "%lf", imu.get_rotation());
+
+		//Vision Testing
+		if(vision.get_object_count() > 0){
+			obj = vision.get_by_size(0); // Get largest object visible
+			if(obj.signature == 1){
+				pros::lcd::print(4, "%d", obj.x_middle_coord);
+			}
+		}
+
 		if(master.get_digital(DIGITAL_B)){
 			autonomous();
 			pros::delay(60000);
