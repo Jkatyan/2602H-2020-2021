@@ -35,12 +35,12 @@ const int auton = 0;
 //CONSTANTS
 #define DRIVEP 0.185
 #define DRIVED 0.04
-#define DRIVEF 0
+#define DRIVEF 9
 
 #define TURNP 0.917
 #define TURND 0
 
-#define ANGLEP 0.5
+#define ANGLEP 3
 
 #define RC 1 //Right Chassis Speed
 #define LC 1 //Left Chassis Speed
@@ -109,6 +109,10 @@ void reset_drive(){
 
 double rollAngle180(double angle){
 	return angle - 360.0 * std::floor((angle + 180) / 360.0);
+}
+
+double getRotation(){
+	return imu.get_rotation() * 1.00166;
 }
 
 bool isStopped(){
@@ -225,9 +229,9 @@ void driveOp(){
 	set_drive(master.get_analog(ANALOG_LEFT_Y), master.get_analog(ANALOG_RIGHT_Y));
 }
 
-void drive(int target, float angle, int time, float speed){
+void drive(int target, float angle, int time, float correctionStrength, float speed){
   int atTarget = 0;
-  float driveEnc = enc.get_value();
+  float driveEnc = -enc.get_value();
 	int direction = 1;
   int startTime = pros::millis();
 
@@ -235,21 +239,22 @@ void drive(int target, float angle, int time, float speed){
 		direction = -1;
 	}
 
-  while ((atTarget != 1) && (pros::millis()-startTime) < time) {
-	  driveEnc = enc.get_value();
+  while ((atTarget != 1) || (pros::millis()-startTime) < time) {
+	  driveEnc = -enc.get_value();
 	  float driveVal = pidCalculate(drivePID, target, driveEnc)*speed;
-		float angleVal = pidCalculate(anglePID, angle, imu.get_rotation());
+		float angleVal = pidCalculate(anglePID, angle, getRotation())*correctionStrength;
 
 	  float rightVal = driveVal - angleVal;
 	  float leftVal = driveVal + angleVal;
 
-	  set_drive(leftVal, rightVal);
 		if (direction == 1){
+			set_drive(leftVal + DRIVEF, rightVal + DRIVEF);
 			if(driveEnc >= target || ((pros::millis()-startTime) == time)){
 		     atTarget = 1;
 			}
 		}
 		else{
+			set_drive(leftVal - DRIVEF, rightVal - DRIVEF);
 			if(driveEnc <= target || ((pros::millis()-startTime) == time)){
 		     atTarget = 1;
 			}
@@ -260,21 +265,34 @@ void drive(int target, float angle, int time, float speed){
 
 void rotate(float target, int time, float speed){
 	int atTarget = 0;
-  float driveEnc = 0.0;
+  float driveEnc = getRotation();
   float distance = 0.0;
+	int direction = 1;
   int startTime = pros::millis();
 
-	while ((atTarget != 1) && (pros::millis()-startTime) < time) {
-	  driveEnc = imu.get_rotation();
+	if (driveEnc > target){
+		direction = -1;
+	}
+
+	while ((atTarget != 1) || (pros::millis()-startTime) < time) {
+	  driveEnc = getRotation();
 	  distance = target - driveEnc;
 
 	  float val = pidCalculate(turnPID, target, driveEnc)*speed;
 	  float rightVal = val;
 	  float leftVal = val;
 
-	  set_drive(leftVal, -rightVal);
-	  if(driveEnc == target || ((pros::millis()-startTime) == time)){
-	     atTarget = 1;
+		if (direction == 1){
+			set_drive(leftVal, -rightVal);
+			if(driveEnc >= target || ((pros::millis()-startTime) == time)){
+		     atTarget = 1;
+			}
+		}
+		else{
+			set_drive(leftVal, -rightVal);
+			if(driveEnc <= target || ((pros::millis()-startTime) == time)){
+		     atTarget = 1;
+			}
 		}
     pros::delay(20);
   }
@@ -315,6 +333,8 @@ void autonomous() {
 	drivePID = pidInit (DRIVEP, 0, DRIVED, 0, 100.0, 5, 15);
 	turnPID = pidInit (TURNP, 0, TURND, 0, 10.0, 99999, 99999);
 	anglePID = pidInit (ANGLEP, 0, 0, 0, 10.0, 99999, 99999);
+
+	drive(2000, 0, 5000, 1, 1);
 }
 
 void opcontrol() {
@@ -322,6 +342,12 @@ void opcontrol() {
 	while (true) {
 		driveOp();
 		rollerOp();
+		pros::lcd::print(2, "%d", enc.get_value());
+		pros::lcd::print(3, "%lf", imu.get_rotation());
+		if(master.get_digital(DIGITAL_B)){
+			autonomous();
+			pros::delay(60000);
+		}
 		pros::delay(20);
 	}
 }
