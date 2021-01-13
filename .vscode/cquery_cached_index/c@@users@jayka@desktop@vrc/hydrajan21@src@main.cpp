@@ -231,15 +231,6 @@ void rollerOp(){
 }
 
 //DRIVE FUNCTIONS
-void driveOp(){
-	if(master.get_digital(DIGITAL_R1) && master.get_digital(DIGITAL_R2)){
-		fastTrack(1, 1);
-	}
-	else{
-		set_drive(master.get_analog(ANALOG_LEFT_Y), master.get_analog(ANALOG_RIGHT_Y));
-	}
-}
-
 void drive(int target, float angle, int time, float correctionStrength, float speed){
   int atTarget = 0;
   float driveEnc = -enc.get_value();
@@ -323,7 +314,7 @@ void track(int target, int sig, int time, float speed){
 	}
 
   while ((atTarget != 1) || (pros::millis()-startTime) < time) {
-		int angleVal = 0;
+		double angleVal = 0;
 		if(vision.get_object_count() > 0){
 			obj = vision.get_by_size(0); // Get largest object visible
 			if(obj.signature == sig){
@@ -372,8 +363,8 @@ void track(int target, int sig, int time, float speed){
   }
 }
 
-void fastTrack(int sig, float speed){
-		int angleVal = 0;
+double fastTrack(int sig, float speed){
+		double angleVal = 0;
 		if(vision.get_object_count() > 0){
 			obj = vision.get_by_size(0); // Get largest object visible
 			if(obj.signature == sig){
@@ -400,9 +391,7 @@ void fastTrack(int sig, float speed){
 				}
 			}
 		}
-	  float rightVal = 127*speed - angleVal;
-	  float leftVal = 127*speed + angleVal;
-		set_drive(leftVal + DRIVEF, rightVal + DRIVEF);
+	  return angleVal;
 }
 
 void driveTrack(int target, float angle, int sig, int time, float correctionStrength, float speed){
@@ -627,6 +616,15 @@ void rotateTrack(float target, int sig, int time, float speed){
 		}
     pros::delay(20);
   }
+}
+
+void driveOp(){
+	if(master.get_digital(DIGITAL_R1) && master.get_digital(DIGITAL_R2)){
+		set_drive(master.get_analog(ANALOG_LEFT_Y) + fastTrack(1, 1), master.get_analog(ANALOG_RIGHT_Y) - fastTrack(1, 1));
+	}
+	else{
+		set_drive(master.get_analog(ANALOG_LEFT_Y), master.get_analog(ANALOG_RIGHT_Y));
+	}
 }
 
 //INITIALIZE
