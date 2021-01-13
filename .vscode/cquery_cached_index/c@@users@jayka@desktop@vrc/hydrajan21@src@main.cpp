@@ -26,6 +26,7 @@ const int auton = 0;
 #define TOP_ROLLER 16
 
 //Sensors
+#define LINE_PORT 4
 #define TRACKER_A 1
 #define TRACKER_B 2
 #define IMU_PORT 1
@@ -33,11 +34,11 @@ const int auton = 0;
 #define VISION_PORT 21
 
 //CONSTANTS
-#define DRIVEP 0.185
-#define DRIVED 0.04
+#define DRIVEP 0.09
+#define DRIVED 0.01
 #define DRIVEF 9
 
-#define TURNP 0.917
+#define TURNP 0.67
 #define TURND 0
 
 #define ANGLEP 3
@@ -62,6 +63,7 @@ pros::Motor rightIntake (RIGHT_INTAKE, true);
 pros::Motor midRoller (MID_ROLLER, true);
 pros::Motor topRoller (TOP_ROLLER, true);
 
+pros::ADIAnalogIn line (LINE_PORT);
 pros::ADIEncoder enc (TRACKER_A, TRACKER_B);
 pros::Optical optical(OPTICAL_PORT);
 pros::Imu imu (IMU_PORT);
@@ -142,16 +144,6 @@ bool crossedHalf(float distance, float target){
 int intakeMode = 0;
 void setState(int state){
 	intakeMode = state;
-	/*
-	* 0: Everything Stopped
-	* 1: Indexing, Intakes In
-	* 2: Indexing, Intakes Out
-	* 3: Indexing, Intakes Stopped
-	* 4: Reverse Everything
-	* 5: Score, Intakes In
-	* 6: Score, Intakes Out
-	* 7: Score, Intakes Stopped
-	*/
 }
 
 void set_intakes(int intakes){
@@ -192,13 +184,13 @@ int intakeTask(){
 				set_rollers(0, 0, 0);
 			break;
 			case 1:
-				set_rollers(127, 127, -60);
+				set_rollers(127, 127, -127);
 			break;
 			case 2:
-				set_rollers(-127, 127, -60);
+				set_rollers(-127, 127, -127);
 			break;
 			case 3:
-				set_rollers(0, 127, -60);
+				set_rollers(0, 127, -127);
 			break;
 			case 4:
 				set_rollers(-127, -127, -127);
@@ -278,8 +270,12 @@ void drive(int target, float angle, int time, float correctionStrength, float sp
 		     atTarget = 1;
 			}
 		}
+		pros::lcd::print(2, "%d", -enc.get_value());
+		pros::lcd::print(3, "%lf", imu.get_rotation());
     pros::delay(20);
   }
+	pros::lcd::print(2, "%d", -enc.get_value());
+	pros::lcd::print(3, "%lf", imu.get_rotation());
 }
 
 void driveSetState(int target, int state, float angle, int time, float correctionStrength, float speed){
@@ -316,8 +312,12 @@ void driveSetState(int target, int state, float angle, int time, float correctio
 		     atTarget = 1;
 			}
 		}
+		pros::lcd::print(2, "%d", -enc.get_value());
+		pros::lcd::print(3, "%lf", imu.get_rotation());
     pros::delay(20);
   }
+	pros::lcd::print(2, "%d", -enc.get_value());
+	pros::lcd::print(3, "%lf", imu.get_rotation());
 }
 
 void track(int target, int sig, int time, float speed){
@@ -339,19 +339,19 @@ void track(int target, int sig, int time, float speed){
 					angleVal = 0;
 				}
 				else if(abs(obj.x_middle_coord) <= 25){
-					angleVal = 20*speed;
-				}
-				else if(abs(obj.x_middle_coord) <= 30){
-					angleVal = 25*speed;
-				}
-				else if(abs(obj.x_middle_coord) <= 35){
 					angleVal = 30*speed;
 				}
+				else if(abs(obj.x_middle_coord) <= 30){
+					angleVal = 40*speed;
+				}
+				else if(abs(obj.x_middle_coord) <= 35){
+					angleVal = 45*speed;
+				}
 				else if(abs(obj.x_middle_coord) <= 40){
-					angleVal = 35*speed;
+					angleVal = 50*speed;
 				}
 				else if(abs(obj.x_middle_coord) > 40){
-					angleVal = 50*speed;
+					angleVal = 60*speed;
 				}
 				if(obj.x_middle_coord < 0){
 					angleVal *= -1;
@@ -377,7 +377,11 @@ void track(int target, int sig, int time, float speed){
 			}
 		}
     pros::delay(20);
+		pros::lcd::print(2, "%d", -enc.get_value());
+		pros::lcd::print(3, "%lf", imu.get_rotation());
   }
+	pros::lcd::print(2, "%d", -enc.get_value());
+	pros::lcd::print(3, "%lf", imu.get_rotation());
 }
 
 double fastTrack(int sig, float speed){
@@ -473,8 +477,12 @@ void driveTrack(int target, float angle, int sig, int time, float correctionStre
 		     atTarget = 1;
 			}
 		}
+		pros::lcd::print(2, "%d", -enc.get_value());
+		pros::lcd::print(3, "%lf", imu.get_rotation());
     pros::delay(20);
   }
+	pros::lcd::print(2, "%d", -enc.get_value());
+	pros::lcd::print(3, "%lf", imu.get_rotation());
 }
 
 void trackDrive(int target, float angle, int sig, int time, float correctionStrength, float speed){
@@ -537,8 +545,12 @@ void trackDrive(int target, float angle, int sig, int time, float correctionStre
 		     atTarget = 1;
 			}
 		}
+		pros::lcd::print(2, "%d", -enc.get_value());
+		pros::lcd::print(3, "%lf", imu.get_rotation());
     pros::delay(20);
   }
+	pros::lcd::print(2, "%d", -enc.get_value());
+	pros::lcd::print(3, "%lf", imu.get_rotation());
 }
 
 void rotate(float target, int time, float speed){
@@ -561,19 +573,23 @@ void rotate(float target, int time, float speed){
 	  float leftVal = val;
 
 		if (direction == 1){
-			set_drive(leftVal, -rightVal);
+			set_drive(leftVal + DRIVEF, -rightVal - DRIVEF);
 			if(driveEnc >= target || ((pros::millis()-startTime) == time)){
 		     atTarget = 1;
 			}
 		}
 		else{
-			set_drive(leftVal, -rightVal);
+			set_drive(leftVal - DRIVEF, -rightVal + DRIVEF);
 			if(driveEnc <= target || ((pros::millis()-startTime) == time)){
 		     atTarget = 1;
 			}
 		}
+		pros::lcd::print(2, "%d", -enc.get_value());
+		pros::lcd::print(3, "%lf", imu.get_rotation());
     pros::delay(20);
   }
+	pros::lcd::print(2, "%d", -enc.get_value());
+	pros::lcd::print(3, "%lf", imu.get_rotation());
 	reset_drive();
 }
 
@@ -632,8 +648,12 @@ void rotateTrack(float target, int sig, int time, float speed){
 		     atTarget = 1;
 			}
 		}
+		pros::lcd::print(2, "%d", -enc.get_value());
+		pros::lcd::print(3, "%lf", imu.get_rotation());
     pros::delay(20);
   }
+	pros::lcd::print(2, "%d", -enc.get_value());
+	pros::lcd::print(3, "%lf", imu.get_rotation());
 }
 
 void driveOp(){
@@ -684,7 +704,72 @@ void autonomous() {
 	turnPID = pidInit (TURNP, 0, TURND, 0, 10.0, 99999, 99999);
 	anglePID = pidInit (ANGLEP, 0, 0, 0, 10.0, 99999, 99999);
 
-	trackDrive(2000, 0, 2, 6000, 1, 1);
+	/*
+	* 0: Everything Stopped
+	* 1: Indexing, Intakes In
+	* 2: Indexing, Intakes Out
+	* 3: Indexing, Intakes Stopped
+	* 4: Reverse Everything
+	* 5: Score, Intakes In
+	* 6: Score, Intakes Out
+	* 7: Score, Intakes Stopped
+	*/
+
+	reset_drive(); //1
+	setState(1);
+
+	track(2200, 1, 2500, 1); //2
+	reset_drive();
+
+	drive(-900, -90, 1800, 1, 1); //3
+
+	rotate(-150, 2000, 1); //4
+	track(1300, 2, 1800, 1);
+
+	setState(5); //5
+	pros::delay(700);
+	setState(3);
+
+	drive(0, -145, 2000, 1, 1); //6
+	setState(4);
+	pros::delay(500);
+	setState(0);
+
+	rotate(-315, 2000, 1); //7
+	setState(1);
+	track(1700, 1, 1000, 1);
+
+	rotate(-450, 2000, 1); //8
+	track(1600, 1, 2800, 1);
+
+	setState(5); //9
+	pros::delay(700);
+	setState(3);
+
+	drive(600, -450, 2000, 1, 1); //10
+
+	setState(4); //11
+	pros::delay(400);
+	setState(0);
+
+	rotate(-360, 2000, 1); //12
+	setState(1);
+	track(2200, 1, 3000, 1);
+	setState(0);
+
+	drive(1700, -360, 2000, 1, 1); //13
+	rotate(-420, 2000, 1);
+
+	track(1500, 2, 1800, 1);
+	setState(5); //14
+	pros::delay(700);
+	setState(3);
+
+	drive(0, -420, 2000, 1, 1); //6
+	setState(4);
+
+	pros::lcd::print(2, "%d", -enc.get_value());
+	pros::lcd::print(3, "%lf", imu.get_rotation());
 }
 
 void opcontrol() {
