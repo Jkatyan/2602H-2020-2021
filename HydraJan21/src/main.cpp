@@ -69,8 +69,8 @@ pros::Vision vision (VISION_PORT);
 
 pros::vision_object_s_t obj;
 pros::vision_signature_s_t RED_SIG = {1, {1, 0, 0}, 3.000000, 6335, 7645, 6990, -541, 431, -56, 4598058, 0};
-pros::vision_signature_s_t BLUE_SIG;
-pros::vision_signature_s_t FLAG_SIG;
+pros::vision_signature_s_t BLUE_SIG = {2, {1, 0, 0}, 3.000000, -3491, -2017, -2754, 8813, 13279, 11046, 2570882, 0};
+pros::vision_signature_s_t FLAG_SIG = {3, {1, 0, 0}, 3.000000, -4491, -2803, -3646, -2821, 1, -1410, 6787717, 0};
 
 
 //HELPER FUNCTIONS
@@ -155,20 +155,34 @@ void setState(int state){
 }
 
 void set_intakes(int intakes){
-	rightIntake.move(intakes);
-	leftIntake.move(intakes);
+	if(intakes == 0){
+		rightIntake.move_velocity(0);
+		leftIntake.move_velocity(0);
+	}
+	else{
+		rightIntake.move(intakes);
+		leftIntake.move(intakes);
+	}
 }
 
 void set_conveyor(int mid, int top){
-	midRoller.move(mid);
-	topRoller.move(top);
+	if(mid == 0){
+		midRoller.move_velocity(0);
+	}
+	else{
+		midRoller.move(mid);
+	}
+	if(top == 0){
+		topRoller.move_velocity(0);
+	}
+	else{
+		topRoller.move(top);
+	}
 }
 
 void set_rollers(int intakes, int mid, int top){
-	rightIntake.move(intakes);
-	leftIntake.move(intakes);
-	midRoller.move(mid);
-	topRoller.move(top);
+	set_intakes(intakes);
+	set_conveyor(mid, top);
 }
 
 int intakeTask(){
@@ -197,6 +211,9 @@ int intakeTask(){
 			break;
 			case 7:
 				set_rollers(0, 127, 127);
+			break;
+			case -1:
+				continue;
 			break;
 		}
 		pros::delay(20);
@@ -399,7 +416,7 @@ void driveTrack(int target, float angle, int sig, int time, float correctionStre
   float driveEnc = -enc.get_value();
 	int direction = 1;
   int startTime = pros::millis();
-	float angleVal = 0.0
+	float angleVal = 0.0;
 
 	if (driveEnc > target){
 		direction = -1;
@@ -465,7 +482,7 @@ void trackDrive(int target, float angle, int sig, int time, float correctionStre
   float driveEnc = -enc.get_value();
 	int direction = 1;
   int startTime = pros::millis();
-	float angleVal = 0.0
+	float angleVal = 0.0;
 
 	if (driveEnc > target){
 		direction = -1;
@@ -562,10 +579,11 @@ void rotate(float target, int time, float speed){
 
 void rotateTrack(float target, int sig, int time, float speed){
   int atTarget = 0;
-  float driveEnc = getRotation()();
+  float driveEnc = getRotation();
 	int direction = 1;
   int startTime = pros::millis();
-	float val = 0.0
+	float val = 0.0;
+	float angleVal = 0.0;
 
 	if (driveEnc > target){
 		direction = -1;
@@ -650,6 +668,8 @@ void initialize() {
 
 	//SENSORS
 	vision.set_signature(1, &RED_SIG);
+	vision.set_signature(2, &BLUE_SIG);
+	vision.set_signature(3, &FLAG_SIG);
 	vision.clear_led();
 	vision.set_zero_point(pros::E_VISION_ZERO_CENTER);
 	enc.reset();
@@ -664,11 +684,13 @@ void autonomous() {
 	turnPID = pidInit (TURNP, 0, TURND, 0, 10.0, 99999, 99999);
 	anglePID = pidInit (ANGLEP, 0, 0, 0, 10.0, 99999, 99999);
 
-	drive(2000, 0, 5000, 1, 1);
+	trackDrive(2000, 0, 2, 6000, 1, 1);
 }
 
 void opcontrol() {
-	intakeMode = -1;
+	intakeMode = 0;
+	pros::vision_signature_s_t sig = vision.get_signature(3);
+	pros::Vision::print_signature(sig);
 	while (true) {
 		driveOp();
 		rollerOp();
