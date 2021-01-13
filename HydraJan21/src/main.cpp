@@ -279,6 +279,44 @@ void drive(int target, float angle, int time, float correctionStrength, float sp
   }
 }
 
+void driveSetState(int target, int state, float angle, int time, float correctionStrength, float speed){
+  int atTarget = 0;
+  float driveEnc = -enc.get_value();
+	int direction = 1;
+  int startTime = pros::millis();
+
+	if (driveEnc > target){
+		direction = -1;
+	}
+
+  while ((atTarget != 1) || (pros::millis()-startTime) < time) {
+	  driveEnc = -enc.get_value();
+	  float driveVal = pidCalculate(drivePID, target, driveEnc)*speed;
+		float angleVal = pidCalculate(anglePID, angle, getRotation())*correctionStrength;
+
+	  float rightVal = driveVal - angleVal;
+	  float leftVal = driveVal + angleVal;
+
+		if(crossedHalf(driveEnc, target)){
+			setState(state);
+		}
+
+		if (direction == 1){
+			set_drive(leftVal + DRIVEF, rightVal + DRIVEF);
+			if(driveEnc >= target || ((pros::millis()-startTime) == time)){
+		     atTarget = 1;
+			}
+		}
+		else{
+			set_drive(leftVal - DRIVEF, rightVal - DRIVEF);
+			if(driveEnc <= target || ((pros::millis()-startTime) == time)){
+		     atTarget = 1;
+			}
+		}
+    pros::delay(20);
+  }
+}
+
 void track(int target, int sig, int time, float speed){
   int atTarget = 0;
   float driveEnc = -enc.get_value();
@@ -309,8 +347,8 @@ void track(int target, int sig, int time, float speed){
 				else if(abs(obj.x_middle_coord) <= 40){
 					angleVal = 30;
 				}
-				else{
-					angleVal = 35;
+				else if(abs(obj.x_middle_coord) > 40){
+					angleVal = 50;
 				}
 				if(obj.x_middle_coord < 0){
 					angleVal *= -1;
@@ -412,8 +450,7 @@ void autonomous() {
 	turnPID = pidInit (TURNP, 0, TURND, 0, 10.0, 99999, 99999);
 	anglePID = pidInit (ANGLEP, 0, 0, 0, 10.0, 99999, 99999);
 
-	set_intakes(127);
-	track(3000, 1, 6000, 1);
+	drive(2000, 0, 5000, 1, 1);
 }
 
 void opcontrol() {

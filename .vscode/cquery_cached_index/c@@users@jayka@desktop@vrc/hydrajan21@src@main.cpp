@@ -35,12 +35,12 @@ const int auton = 0;
 //CONSTANTS
 #define DRIVEP 0.185
 #define DRIVED 0.04
-#define DRIVEF 0
+#define DRIVEF 9
 
 #define TURNP 0.917
 #define TURND 0
 
-#define ANGLEP 0.5
+#define ANGLEP 3
 
 #define RC 1 //Right Chassis Speed
 #define LC 1 //Left Chassis Speed
@@ -67,6 +67,9 @@ pros::Optical optical(OPTICAL_PORT);
 pros::Imu imu (IMU_PORT);
 pros::Vision vision (VISION_PORT);
 
+pros::vision_object_s_t obj;
+pros::vision_signature_s_t RED_SIG = {1, {1, 0, 0}, 3.000000, 6335, 7645, 6990, -541, 431, -56, 4598058, 0};
+
 //HELPER FUNCTIONS
 void brake(){
 	LF.move_velocity(0);
@@ -85,14 +88,14 @@ void set_drive(float left, float right){
 	RB.move(right * RC);
 }
 
-void set_drive_brakes(motor_brake_mode_e_t mode){
+void set_drive_brakes(pros::motor_brake_mode_e_t mode){
 	LF.set_brake_mode(mode);
 	LB.set_brake_mode(mode);
 	RF.set_brake_mode(mode);
 	RB.set_brake_mode(mode);
 }
 
-void set_intake_brakes(motor_brake_mode_e_t mode){
+void set_intake_brakes(pros::motor_brake_mode_e_t mode){
 	leftIntake.set_brake_mode(mode);
 	rightIntake.set_brake_mode(mode);
 	midRoller.set_brake_mode(mode);
@@ -109,6 +112,10 @@ void reset_drive(){
 
 double rollAngle180(double angle){
 	return angle - 360.0 * std::floor((angle + 180) / 360.0);
+}
+
+double getRotation(){
+	return imu.get_rotation() * 1.00166;
 }
 
 bool isStopped(){
@@ -209,6 +216,28 @@ void rollerOp(){
 	else{ //Stopped
 		set_conveyor(0, 0);
 	}
+	if(master.get_digital(DIGITAL_R1)){
+		set_intakes(127);
+	}
+	else if(master.get_digital(DIGITAL_R2)){
+		set_intakes(-127);
+	}
+	else{
+		set_intakes(0);
+	}
+}
+
+//VISION FUNCTIONS
+bool detectRedBall() {
+
+}
+
+bool detectBlueBall() {
+
+}
+
+bool detectFlag() {
+
 }
 
 //DRIVE FUNCTIONS
@@ -216,9 +245,9 @@ void driveOp(){
 	set_drive(master.get_analog(ANALOG_LEFT_Y), master.get_analog(ANALOG_RIGHT_Y));
 }
 
-void drive(int target, float angle, int time, float speed){
+void drive(int target, float angle, int time, float correctionStrength, float speed){
   int atTarget = 0;
-  float driveEnc = enc.get_value();
+  float driveEnc = -enc.get_value();
 	int direction = 1;
   int startTime = pros::millis();
 
@@ -226,21 +255,120 @@ void drive(int target, float angle, int time, float speed){
 		direction = -1;
 	}
 
-  while ((atTarget != 1) && (pros::millis()-startTime) < time) {
-	  driveEnc = enc.get_value();
+  while ((atTarget != 1) || (pros::millis()-startTime) < time) {
+	  driveEnc = -enc.get_value();
 	  float driveVal = pidCalculate(drivePID, target, driveEnc)*speed;
-		float angleVal = pidCalculate(anglePID, angle, imu.get_rotation());
+		float angleVal = pidCalculate(anglePID, angle, getRotation())*correctionStrength;
 
 	  float rightVal = driveVal - angleVal;
 	  float leftVal = driveVal + angleVal;
 
-	  set_drive(leftVal, rightVal);
 		if (direction == 1){
+			set_drive(leftVal + DRIVEF, rightVal + DRIVEF);
 			if(driveEnc >= target || ((pros::millis()-startTime) == time)){
 		     atTarget = 1;
 			}
 		}
 		else{
+			set_drive(leftVal - DRIVEF, rightVal - DRIVEF);
+			if(driveEnc <= target || ((pros::millis()-startTime) == time)){
+		     atTarget = 1;
+			}
+		}
+    pros::delay(20);
+  }
+}
+
+void driveSetState(int target, int state, float angle, int time, float correctionStrength, float speed){
+  int atTarget = 0;
+  float driveEnc = -enc.get_value();
+	int direction = 1;
+  int startTime = pros::millis();
+
+	if (driveEnc > target){
+		direction = -1;
+	}
+
+  while ((atTarget != 1) || (pros::millis()-startTime) < time) {
+	  driveEnc = -enc.get_value();
+	  float driveVal = pidCalculate(drivePID, target, driveEnc)*speed;
+		float angleVal = pidCalculate(anglePID, angle, getRotation())*correctionStrength;
+
+	  float rightVal = driveVal - angleVal;
+	  float leftVal = driveVal + angleVal;
+
+		if(crossedHalf(driveEnc, target)){
+			setState(state);
+		}
+
+		if (direction == 1){
+			set_drive(leftVal + DRIVEF, rightVal + DRIVEF);
+			if(driveEnc >= target || ((pros::millis()-startTime) == time)){
+		     atTarget = 1;
+			}
+		}
+		else{
+			set_drive(leftVal - DRIVEF, rightVal - DRIVEF);
+			if(driveEnc <= target || ((pros::millis()-startTime) == time)){
+		     atTarget = 1;
+			}
+		}
+    pros::delay(20);
+  }
+}
+
+void track(int target, int sig, int time, float speed){
+  int atTarget = 0;
+  float driveEnc = -enc.get_value();
+	int direction = 1;
+  int startTime = pros::millis();
+
+	if (driveEnc > target){
+		direction = -1;
+	}
+
+  while ((atTarget != 1) || (pros::millis()-startTime) < time) {
+		int angleVal = 0;
+		if(vision.get_object_count() > 0){
+			obj = vision.get_by_size(0); // Get largest object visible
+			if(obj.signature == sig){
+				if(abs(obj.x_middle_coord) <= 20){
+					angleVal = 0;
+				}
+				else if(abs(obj.x_middle_coord) <= 25){
+					angleVal = 15;
+				}
+				else if(abs(obj.x_middle_coord) <= 30){
+					angleVal = 20;
+				}
+				else if(abs(obj.x_middle_coord) <= 35){
+					angleVal = 25;
+				}
+				else if(abs(obj.x_middle_coord) <= 40){
+					angleVal = 30;
+				}
+				else if(abs(obj.x_middle_coord) > 40){
+					angleVal = 50;
+				}
+				if(obj.x_middle_coord < 0){
+					angleVal *= -1;
+				}
+			}
+		}
+	  driveEnc = -enc.get_value();
+	  float driveVal = pidCalculate(drivePID, target, driveEnc)*speed;
+
+	  float rightVal = driveVal - angleVal;
+	  float leftVal = driveVal + angleVal;
+
+		if (direction == 1){
+			set_drive(leftVal + DRIVEF, rightVal + DRIVEF);
+			if(driveEnc >= target || ((pros::millis()-startTime) == time)){
+		     atTarget = 1;
+			}
+		}
+		else{
+			set_drive(leftVal - DRIVEF, rightVal - DRIVEF);
 			if(driveEnc <= target || ((pros::millis()-startTime) == time)){
 		     atTarget = 1;
 			}
@@ -251,22 +379,34 @@ void drive(int target, float angle, int time, float speed){
 
 void rotate(float target, int time, float speed){
 	int atTarget = 0;
-  float driveEnc = 0.0;
+  float driveEnc = getRotation();
   float distance = 0.0;
+	int direction = 1;
   int startTime = pros::millis();
 
-	sideEnc.reset();
-	while ((atTarget != 1) && (pros::millis()-startTime) < time) {
-	  driveEnc = imu.get_rotation();
+	if (driveEnc > target){
+		direction = -1;
+	}
+
+	while ((atTarget != 1) || (pros::millis()-startTime) < time) {
+	  driveEnc = getRotation();
 	  distance = target - driveEnc;
 
 	  float val = pidCalculate(turnPID, target, driveEnc)*speed;
 	  float rightVal = val;
 	  float leftVal = val;
 
-	  set_drive(leftVal, -rightVal);
-	  if(driveEnc == target || ((pros::millis()-startTime) == time)){
-	     atTarget = 1;
+		if (direction == 1){
+			set_drive(leftVal, -rightVal);
+			if(driveEnc >= target || ((pros::millis()-startTime) == time)){
+		     atTarget = 1;
+			}
+		}
+		else{
+			set_drive(leftVal, -rightVal);
+			if(driveEnc <= target || ((pros::millis()-startTime) == time)){
+		     atTarget = 1;
+			}
 		}
     pros::delay(20);
   }
@@ -280,7 +420,7 @@ void initRollers(){
 	pros::Task intake_task(intakeTask);
 }
 
-void initDrive(bool useImu){
+void initDrive(){
 	imu.reset();
 	pros::delay(2500);
 	set_drive_brakes(MOTOR_BRAKE_COAST);
@@ -290,8 +430,14 @@ void initialize() {
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Hello PROS User!");
 
+	//Tasks
+	initDrive();
+	initRollers();
+
 	//SENSORS
+	vision.set_signature(1, &RED_SIG);
 	vision.clear_led();
+	vision.set_zero_point(pros::E_VISION_ZERO_CENTER);
 	enc.reset();
 }
 
@@ -303,6 +449,8 @@ void autonomous() {
 	drivePID = pidInit (DRIVEP, 0, DRIVED, 0, 100.0, 5, 15);
 	turnPID = pidInit (TURNP, 0, TURND, 0, 10.0, 99999, 99999);
 	anglePID = pidInit (ANGLEP, 0, 0, 0, 10.0, 99999, 99999);
+
+	drive(2000, 0, 5000, 1, 1);
 }
 
 void opcontrol() {
@@ -310,6 +458,21 @@ void opcontrol() {
 	while (true) {
 		driveOp();
 		rollerOp();
-		delay(20);
+		pros::lcd::print(2, "%d", enc.get_value());
+		pros::lcd::print(3, "%lf", imu.get_rotation());
+
+		//Vision Testing
+		if(vision.get_object_count() > 0){
+			obj = vision.get_by_size(0); // Get largest object visible
+			if(obj.signature == 1){
+				pros::lcd::print(4, "%d", obj.x_middle_coord);
+			}
+		}
+
+		if(master.get_digital(DIGITAL_B)){
+			autonomous();
+			pros::delay(60000);
+		}
+		pros::delay(20);
 	}
 }
