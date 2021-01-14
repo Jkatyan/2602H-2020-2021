@@ -723,36 +723,36 @@ void autonomous() {
 
 	drive(-900, -90, 1800, 1, 1); //3
 
-	rotate(-150, 2000, 1); //4
+	rotate(-150, 1000, 1); //4
 	track(1300, 2, 1800, 1);
 
 	setState(5); //5
 	pros::delay(700);
 	setState(3);
 
-	drive(0, -145, 2000, 1, 1); //6
+	drive(0, -145, 1500, 1, 1); //6
 	setState(4);
 	pros::delay(500);
 	setState(0);
 
-	rotate(-315, 2000, 1); //7
+	rotate(-315, 1500, 1); //7
 	setState(1);
-	track(1700, 1, 1000, 1);
+	track(1700, 1, 1020, 1);
 
-	rotate(-450, 2000, 1); //8
+	rotate(-450, 1500, 1); //8
 	track(1600, 1, 2800, 1);
 
 	setState(5); //9
 	pros::delay(700);
 	setState(3);
 
-	drive(600, -450, 2000, 1, 1); //10
+	drive(600, -450, 1500, 1, 1); //10
 
 	setState(4); //11
 	pros::delay(400);
 	setState(0);
 
-	rotate(-360, 2000, 1); //12
+	rotate(-360, 1500, 1); //12
 	setState(1);
 	track(2200, 1, 3000, 1);
 	setState(0);
@@ -760,13 +760,32 @@ void autonomous() {
 	drive(1700, -360, 2000, 1, 1); //13
 	rotate(-420, 2000, 1);
 
-	track(1500, 2, 1800, 1);
-	setState(5); //14
+	track(1350, 2, 1800, 1); //14
+	setState(5);
 	pros::delay(700);
 	setState(3);
 
-	drive(0, -420, 2000, 1, 1); //6
+	drive(0, -420, 2000, 1, 1); //15
 	setState(4);
+	pros::delay(400);
+	setState(0);
+
+	rotate(-250, 1500, 1); //16
+	setState(1);
+	track(1600, 1, 1500, 1);
+	setState(0);
+
+	rotate(-360, 1500, 1); //17
+	track(1650, 2, 2800, 1);
+
+	setState(5); //18
+	pros::delay(800);
+	setState(3);
+
+	drive(400, -360, 2000, 1, 1);
+	setState(4);
+	pros::delay(400);
+	setState(0);
 
 	pros::lcd::print(2, "%d", -enc.get_value());
 	pros::lcd::print(3, "%lf", imu.get_rotation());
