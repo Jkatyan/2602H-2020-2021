@@ -3,15 +3,12 @@
 //Autonomous:
 /*
 * 0: Skills
-
 * 1: Red Left
 * 2: Red Left 2
 * 3: Red Left 3
-
 * 4: Blue Right
 * 5: Blue Right 2
 * 6: Blue Right 3
-
 */
 const int auton = 0;
 
@@ -260,13 +257,13 @@ void drive(int target, float angle, int time, float correctionStrength, float sp
 
 		if (direction == 1){
 			set_drive(leftVal + DRIVEF, rightVal + DRIVEF);
-			if(driveEnc >= target || ((pros::millis()-startTime) == time)){
+			if(driveEnc >= target || ((pros::millis()-startTime) >= time)){
 		     atTarget = 1;
 			}
 		}
 		else{
 			set_drive(leftVal - DRIVEF, rightVal - DRIVEF);
-			if(driveEnc <= target || ((pros::millis()-startTime) == time)){
+			if(driveEnc <= target || ((pros::millis()-startTime) >= time)){
 		     atTarget = 1;
 			}
 		}
@@ -302,13 +299,13 @@ void driveSetState(int target, int state, float angle, int time, float correctio
 
 		if (direction == 1){
 			set_drive(leftVal + DRIVEF, rightVal + DRIVEF);
-			if(driveEnc >= target || ((pros::millis()-startTime) == time)){
+			if(driveEnc >= target || ((pros::millis()-startTime) >= time)){
 		     atTarget = 1;
 			}
 		}
 		else{
 			set_drive(leftVal - DRIVEF, rightVal - DRIVEF);
-			if(driveEnc <= target || ((pros::millis()-startTime) == time)){
+			if(driveEnc <= target || ((pros::millis()-startTime) >= time)){
 		     atTarget = 1;
 			}
 		}
@@ -335,8 +332,14 @@ void track(int target, int sig, int time, float speed){
 		if(vision.get_object_count() > 0){
 			obj = vision.get_by_size(0); // Get largest object visible
 			if(obj.signature == sig){
-				if(abs(obj.x_middle_coord) <= 18){
+				if(abs(obj.x_middle_coord) <= 10){
 					angleVal = 0;
+				}
+				else if(abs(obj.x_middle_coord) <= 15){
+					angleVal = 15*speed;
+				}
+				else if(abs(obj.x_middle_coord) <= 20){
+					angleVal = 20*speed;
 				}
 				else if(abs(obj.x_middle_coord) <= 25){
 					angleVal = 30*speed;
@@ -366,13 +369,13 @@ void track(int target, int sig, int time, float speed){
 
 		if (direction == 1){
 			set_drive(leftVal + DRIVEF, rightVal + DRIVEF);
-			if(driveEnc >= target || ((pros::millis()-startTime) == time)){
+			if(driveEnc >= target || ((pros::millis()-startTime) >= time)){
 		     atTarget = 1;
 			}
 		}
 		else{
 			set_drive(leftVal - DRIVEF, rightVal - DRIVEF);
-			if(driveEnc <= target || ((pros::millis()-startTime) == time)){
+			if(driveEnc <= target || ((pros::millis()-startTime) >= time)){
 		     atTarget = 1;
 			}
 		}
@@ -485,7 +488,7 @@ void driveTrack(int target, float angle, int sig, int time, float correctionStre
 	pros::lcd::print(3, "%lf", imu.get_rotation());
 }
 
-void trackDrive(int target, float angle, int sig, int time, float correctionStrength, float speed){
+void trackDrive(int target, int sig, int trackTime, int time, float correctionStrength, float speed){
   int atTarget = 0;
   float driveEnc = -enc.get_value();
 	int direction = 1;
@@ -497,34 +500,39 @@ void trackDrive(int target, float angle, int sig, int time, float correctionStre
 	}
 
   while ((atTarget != 1) || (pros::millis()-startTime) < time) {
-		if(vision.get_object_count() > 0){
-			obj = vision.get_by_size(0); // Get largest object visible
-			if(obj.signature == sig){
-				if(abs(obj.x_middle_coord) <= 18){
-					angleVal = 0.0;
+		if((pros::millis()-startTime) < trackTime){
+			if(vision.get_object_count() > 0){
+				obj = vision.get_by_size(0); // Get largest object visible
+				if(obj.signature == sig){
+					if(abs(obj.x_middle_coord) <= 18){
+						angleVal = 0.0;
+					}
+					else if(abs(obj.x_middle_coord) <= 25){
+						angleVal = 20*speed;
+					}
+					else if(abs(obj.x_middle_coord) <= 30){
+						angleVal = 25*speed;
+					}
+					else if(abs(obj.x_middle_coord) <= 35){
+						angleVal = 30*speed;
+					}
+					else if(abs(obj.x_middle_coord) <= 40){
+						angleVal = 35*speed;
+					}
+					else if(abs(obj.x_middle_coord) > 40){
+						angleVal = 50*speed;
+					}
+					if(obj.x_middle_coord < 0){
+						angleVal *= -1;
+					}
 				}
-				else if(abs(obj.x_middle_coord) <= 25){
-					angleVal = 20*speed;
-				}
-				else if(abs(obj.x_middle_coord) <= 30){
-					angleVal = 25*speed;
-				}
-				else if(abs(obj.x_middle_coord) <= 35){
-					angleVal = 30*speed;
-				}
-				else if(abs(obj.x_middle_coord) <= 40){
-					angleVal = 35*speed;
-				}
-				else if(abs(obj.x_middle_coord) > 40){
-					angleVal = 50*speed;
-				}
-				if(obj.x_middle_coord < 0){
-					angleVal *= -1;
-				}
+			}
+			else{
+				angleVal = 0.0;
 			}
 		}
 		else{
-			angleVal = pidCalculate(anglePID, angle, getRotation())*correctionStrength;
+			angleVal = 0.0;
 		}
 
 	  driveEnc = -enc.get_value();
@@ -535,13 +543,13 @@ void trackDrive(int target, float angle, int sig, int time, float correctionStre
 
 		if (direction == 1){
 			set_drive(leftVal + DRIVEF, rightVal + DRIVEF);
-			if(driveEnc >= target || ((pros::millis()-startTime) == time)){
+			if(driveEnc >= target || ((pros::millis()-startTime) >= time)){
 		     atTarget = 1;
 			}
 		}
 		else{
 			set_drive(leftVal - DRIVEF, rightVal - DRIVEF);
-			if(driveEnc <= target || ((pros::millis()-startTime) == time)){
+			if(driveEnc <= target || ((pros::millis()-startTime) >= time)){
 		     atTarget = 1;
 			}
 		}
@@ -564,7 +572,7 @@ void rotate(float target, int time, float speed){
 		direction = -1;
 	}
 
-	while ((atTarget != 1) || (pros::millis()-startTime) < time) {
+	while ((atTarget != 1) || ((pros::millis()-startTime) < time)) {
 	  driveEnc = getRotation();
 	  distance = target - driveEnc;
 
@@ -574,13 +582,13 @@ void rotate(float target, int time, float speed){
 
 		if (direction == 1){
 			set_drive(leftVal + DRIVEF, -rightVal - DRIVEF);
-			if(driveEnc >= target || ((pros::millis()-startTime) == time)){
+			if(driveEnc >= target || ((pros::millis()-startTime) >= time)){
 		     atTarget = 1;
 			}
 		}
 		else{
 			set_drive(leftVal - DRIVEF, -rightVal + DRIVEF);
-			if(driveEnc <= target || ((pros::millis()-startTime) == time)){
+			if(driveEnc <= target || ((pros::millis()-startTime) >= time)){
 		     atTarget = 1;
 			}
 		}
@@ -715,77 +723,104 @@ void autonomous() {
 	* 7: Score, Intakes Stopped
 	*/
 
-	reset_drive(); //1
+	reset_drive(); //Start + goal 1
 	setState(1);
 
-	track(2200, 1, 2500, 1); //2
+	drive(1500, -150, 1100, 0.1, 1);
+	//track(2200, 1, 1500, 1); //Ball 1 and 2
 	reset_drive();
 
-	drive(-900, -90, 1800, 1, 1); //3
+	//drive(-900, -90, 1450, 1, 1); // Back up
+	rotate(-150, 700, 1); //Go to goal 2
+	track(1300, 2, 1325, 1);
 
-	rotate(-150, 1000, 1); //4
-	track(1300, 2, 1800, 1);
-
-	setState(5); //5
-	pros::delay(700);
+	setState(5); //score
+	pros::delay(600);
 	setState(3);
 
-	drive(0, -145, 1500, 1, 1); //6
+	drive(-930, -120, 1800, 1, 1); //back out
 	setState(4);
 	pros::delay(500);
 	setState(0);
 
-	rotate(-315, 1500, 1); //7
+	rotate(-345, 1250, 1); //face next ball
 	setState(1);
-	track(1700, 1, 1020, 1);
 
-	rotate(-450, 1500, 1); //8
-	track(1600, 1, 2800, 1);
+	trackDrive(1300, 1, 700, 1200, 1, 1);
+	//track(1300, 1, 1200, 1);
 
-	setState(5); //9
+	rotate(-452, 1050, 1); //go to goal 3
+	track(1625, 1, 1800, 1);
+
+	setState(5); //score
 	pros::delay(700);
 	setState(3);
 
-	drive(600, -450, 1500, 1, 1); //10
+	drive(600, -450, 1200, 1, 1); //back out
 
-	setState(4); //11
+	setState(4); //release
 	pros::delay(400);
 	setState(0);
 
-	rotate(-360, 1500, 1); //12
+	rotate(-360, 1000, 1); //ball
 	setState(1);
-	track(2200, 1, 3000, 1);
-	setState(0);
+	track(2200, 1, 1800, 1);
 
-	drive(1700, -360, 2000, 1, 1); //13
-	rotate(-420, 2000, 1);
+	drive(1600, -360, 2000, 1, 1); //back away and turn
+	rotate(-420, 1000, 1);
 
-	track(1350, 2, 1800, 1); //14
+	track(1500, 2, 1500, 1); //goal 4 + score
 	setState(5);
-	pros::delay(700);
+	pros::delay(850);
 	setState(3);
 
-	drive(0, -420, 2000, 1, 1); //15
+	drive(0, -420, 2000, 1, 1); //back out and release
 	setState(4);
 	pros::delay(400);
 	setState(0);
 
-	rotate(-250, 1500, 1); //16
+	rotate(-255, 1500, 1); //next ball
 	setState(1);
-	track(1600, 1, 1500, 1);
-	setState(0);
+	trackDrive(1600, 1, 800, 1150, 1, 1);
+	//track(1600, 1, 1150, 1);
 
-	rotate(-360, 1500, 1); //17
-	track(1650, 2, 2800, 1);
+	rotate(-360, 1500, 1); //turn to goal
+	track(1750, 2, 2800, 1);
 
-	setState(5); //18
+	setState(5); //score goal 5
 	pros::delay(800);
 	setState(3);
 
-	drive(400, -360, 2000, 1, 1);
+	drive(350, -360, 2000, 1, 1); //back out
 	setState(4);
 	pros::delay(400);
 	setState(0);
+
+	rotate(-300, 1500, 1); //go to goal 6
+	setState(1);
+	track(2800, 2, 3000, 1);
+
+	setState(5); //score goal 6
+	pros::delay(400);
+	setState(3);
+
+	drive(1300, -300, 2000, 1, 1); //back out
+	setState(4);
+	pros::delay(400);
+	setState(0);
+
+	rotate(-180, 1500, 1); //next ball
+	setState(1);
+	track(1700, 1, 1100, 1);
+
+	rotate(-270, 1500, 1); //turn to and score goal
+	track(1500, 2, 2600, 1);
+
+	setState(5); //score
+	pros::delay(700);
+	setState(3);
+
+	drive(600, -270, 1500, 1, 1); //back out
 
 	pros::lcd::print(2, "%d", -enc.get_value());
 	pros::lcd::print(3, "%lf", imu.get_rotation());
