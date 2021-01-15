@@ -712,20 +712,37 @@ void autonomous() {
 	turnPID = pidInit (TURNP, 0, TURND, 0, 10.0, 99999, 99999);
 	anglePID = pidInit (ANGLEP, 0, 0, 0, 10.0, 99999, 99999);
 
-	/*
-	* 0: Everything Stopped
-	* 1: Indexing, Intakes In
-	* 2: Indexing, Intakes Out
-	* 3: Indexing, Intakes Stopped
-	* 4: Reverse Everything
-	* 5: Score, Intakes In
-	* 6: Score, Intakes Out
-	* 7: Score, Intakes Stopped
-	*/
+/*
+	█████████
+	█░░░░░░░█
+	█░░░░░░░█
+	█░░░░░░░█
+	█░█░░░░░█
+	█░░░░░░░█
+	█░░░░░░░█
+	█░░░░░░░█
+	█████████
+	PART 1
+*/
 
 	reset_drive(); //Start + goal 1
-	setState(1);
+	setState(4);
+	pros::delay(300);
 
+/*
+	█████████
+	█░░░░░░░█
+	█░█░░░░░█
+	█░░░░░░░█
+	█░█░░░░░█
+	█░░░░░░░█
+	█░░░░░░░█
+	█░░░░░░░█
+	█████████
+	PART 2
+*/
+
+	setState(1);
 	drive(1500, -150, 1100, 0.1, 1);
 	//track(2200, 1, 1500, 1); //Ball 1 and 2
 	reset_drive();
@@ -738,13 +755,25 @@ void autonomous() {
 	pros::delay(575);
 	setState(3);
 
+/*
+	█████████
+	█░░░░░░░█
+	█░█░█░░░█
+	█░░░░░░░█
+	█░█░░░░░█
+	█░░░░░░░█
+	█░░░░░░░█
+	█░░░░░░░█
+	█████████
+	PART 3
+*/
+
 	driveSetState(-930, 4, -120, 1800, 1, 1); //back out
 
 	rotate(-345, 1250, 1); //face next ball
 	setState(1);
 
 	trackDrive(1300, 1, 400, 1200, 1, 1);
-	//track(1300, 1, 1200, 1);
 
 	rotate(-452, 1050, 1); //go to goal 3
 	track(1625, 1, 1800, 1);
@@ -752,6 +781,19 @@ void autonomous() {
 	setState(5); //score
 	pros::delay(600);
 	setState(3);
+
+/*
+	█████████
+	█░░░░░░░█
+	█░█░█░█░█
+	█░░░░░░░█
+	█░█░░░░░█
+	█░░░░░░░█
+	█░░░░░░░█
+	█░░░░░░░█
+	█████████
+	PART 4
+*/
 
 	drive(150, -450, 1200, 1, 1); //back out
 	setState(4);
@@ -765,13 +807,25 @@ void autonomous() {
 	setState(5); //score goal 4
 	pros::delay(600);
 
+/*
+	█████████
+	█░░░░░░░█
+	█░█░█░█░█
+	█░░░░░░░█
+	█░█░░░█░█
+	█░░░░░░░█
+	█░░░░░░░█
+	█░░░░░░░█
+	█████████
+	PART 5
+*/
+
 	drive(1200, -375, 2000, 1, 1); //back out and release
 	setState(0);
 
 	rotate(-267, 1500, 1); //next ball
 	setState(1);
 	trackDrive(1800, 1, 500, 1400, 1, 1);
-	//track(1600, 1, 1150, 1);
 
 	rotate(-360, 1500, 1); //turn to goal
 	track(1750, 2, 2800, 1);
@@ -779,6 +833,18 @@ void autonomous() {
 	setState(5); //score goal 5
 	pros::delay(600);
 
+/*
+	█████████
+	█░░░░░░░█
+	█░█░█░█░█
+	█░░░░░░░█
+	█░█░░░█░█
+	█░░░░░░░█
+	█░░░░░█░█
+	█░░░░░░░█
+	█████████
+	PART 6
+*/
 
 	drive(375, -360, 2000, 1, 1); //back out
 	setState(0);
@@ -791,13 +857,25 @@ void autonomous() {
 	pros::delay(500);
 	setState(3);
 
+/*
+	█████████
+	█░░░░░░░█
+	█░█░█░█░█
+	█░░░░░░░█
+	█░█░░░█░█
+	█░░░░░░░█
+	█░░░█░█░█
+	█░░░░░░░█
+	█████████
+	PART 7
+*/
+
 	driveSetState(1325, 4, -300, 2000, 1, 1); //back out
 	setState(0);
 
 	rotate(-180, 1500, 1); //next ball
 	setState(1);
 	trackDrive(1800, 1, 700, 1300, 1, 1);
-	//track(1700, 1, 1100, 1);
 
 	rotate(-271, 1500, 1); //turn to and score goal
 	track(1500, 2, 2600, 1);
@@ -806,19 +884,45 @@ void autonomous() {
 	pros::delay(500);
 	setState(3);
 
+/*
+	█████████
+	█░░░░░░░█
+	█░█░█░█░█
+	█░░░░░░░█
+	█░█░░░█░█
+	█░░░░░░░█
+	█░█░█░█░█
+	█░░░░░░░█
+	█████████
+	PART 8
+*/
+
 	drive(100, -270, 1500, 1, 1); //back out
 
 	setState(4); //release
 	pros::delay(200);
 	setState(0);
 
-	rotate(-210, 1000, 1); //ball
+	rotate(-210, 1000, 1); //get ball
 	setState(1);
 	track(2970, 2, 2200, 1);
 
 	setState(5); //score goal 8
 	pros::delay(600);
 	setState(3);
+
+/*
+	█████████
+	█░░░░░░░█
+	█░█░█░█░█
+	█░░░░░░░█
+	█░█░█░█░█
+	█░░░░░░░█
+	█░█░█░█░█
+	█░░░░░░░█
+	█████████
+	PART 9
+*/
 
 	reset_drive();
 	drive(-1200, -210, 2000, 1, 1); //back out and release
