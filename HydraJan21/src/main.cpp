@@ -735,13 +735,10 @@ void autonomous() {
 	track(1300, 2, 1325, 1);
 
 	setState(5); //score
-	pros::delay(600);
+	pros::delay(575);
 	setState(3);
 
-	drive(-930, -120, 1800, 1, 1); //back out
-	setState(4);
-	pros::delay(500);
-	setState(0);
+	driveSetState(-930, 4, -120, 1800, 1, 1); //back out
 
 	rotate(-345, 1250, 1); //face next ball
 	setState(1);
@@ -756,47 +753,37 @@ void autonomous() {
 	pros::delay(600);
 	setState(3);
 
-	drive(200, -450, 1200, 1, 1); //back out
-
-	setState(4); //release
-	pros::delay(200);
-	setState(0);
-
-	rotate(-390, 1000, 1); //ball
-	setState(1);
-	track(2775, 2, 2300, 1);
-
-	//drive(1600, -360, 2000, 1, 1); //back away and turn
-	//rotate(-420, 1000, 1);
-
-	//track(1500, 2, 1500, 1); //goal 4 + score
-	setState(5);
-	pros::delay(600);
-	setState(3);
-
-	drive(1200, -420, 2000, 1, 1); //back out and release
+	drive(150, -450, 1200, 1, 1); //back out
 	setState(4);
-	pros::delay(400);
+	pros::delay(275);
 	setState(0);
 
-	rotate(-268, 1500, 1); //next ball
+	rotate(-387, 1000, 1); //ball
 	setState(1);
-	trackDrive(1525, 1, 500, 1150, 1, 1);
+	trackDrive(2900, 2, 1700, 2300, 1, 1);
+
+	setState(5); //score goal 4
+	pros::delay(600);
+
+	drive(1200, -375, 2000, 1, 1); //back out and release
+	setState(0);
+
+	rotate(-267, 1500, 1); //next ball
+	setState(1);
+	trackDrive(1800, 1, 500, 1400, 1, 1);
 	//track(1600, 1, 1150, 1);
 
 	rotate(-360, 1500, 1); //turn to goal
 	track(1750, 2, 2800, 1);
 
 	setState(5); //score goal 5
-	pros::delay(700);
-	setState(3);
+	pros::delay(600);
+
 
 	drive(375, -360, 2000, 1, 1); //back out
-	setState(4);
-	pros::delay(400);
 	setState(0);
 
-	rotate(-300, 1500, 1); //go to goal 6
+	rotate(-302, 1500, 1); //go to goal 6
 	setState(1);
 	track(2850, 2, 3000, 1);
 
@@ -804,24 +791,44 @@ void autonomous() {
 	pros::delay(500);
 	setState(3);
 
-	drive(1325, -300, 2000, 1, 1); //back out
-	setState(4);
-	pros::delay(400);
+	driveSetState(1325, 4, -300, 2000, 1, 1); //back out
 	setState(0);
 
 	rotate(-180, 1500, 1); //next ball
 	setState(1);
-	trackDrive(1800, 1, 800, 1300, 1, 1);
+	trackDrive(1800, 1, 700, 1300, 1, 1);
 	//track(1700, 1, 1100, 1);
 
-	rotate(-265, 1500, 1); //turn to and score goal
-	track(1500, 1, 2600, 1);
+	rotate(-271, 1500, 1); //turn to and score goal
+	track(1500, 2, 2600, 1);
 
-	setState(5); //score
-	pros::delay(700);
+	setState(5); //score goal 7
+	pros::delay(500);
 	setState(3);
 
-	drive(600, -270, 1500, 1, 1); //back out
+	drive(100, -270, 1500, 1, 1); //back out
+
+	setState(4); //release
+	pros::delay(200);
+	setState(0);
+
+	rotate(-210, 1000, 1); //ball
+	setState(1);
+	track(2970, 2, 2200, 1);
+
+	setState(5); //score goal 8
+	pros::delay(600);
+	setState(3);
+
+	reset_drive();
+	drive(-1200, -210, 2000, 1, 1); //back out and release
+	setState(4);
+	pros::delay(400);
+	setState(0);
+
+	rotate(-90, 1000, 1); //ball
+	setState(1);
+	track(2775, 2, 2300, 1);
 
 	pros::lcd::print(2, "%d", -enc.get_value());
 	pros::lcd::print(3, "%lf", imu.get_rotation());
