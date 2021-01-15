@@ -746,75 +746,76 @@ void autonomous() {
 	rotate(-345, 1250, 1); //face next ball
 	setState(1);
 
-	trackDrive(1300, 1, 700, 1200, 1, 1);
+	trackDrive(1300, 1, 400, 1200, 1, 1);
 	//track(1300, 1, 1200, 1);
 
 	rotate(-452, 1050, 1); //go to goal 3
 	track(1625, 1, 1800, 1);
 
 	setState(5); //score
-	pros::delay(700);
+	pros::delay(600);
 	setState(3);
 
-	drive(600, -450, 1200, 1, 1); //back out
+	drive(200, -450, 1200, 1, 1); //back out
 
 	setState(4); //release
-	pros::delay(400);
+	pros::delay(200);
 	setState(0);
 
-	rotate(-360, 1000, 1); //ball
+	rotate(-390, 1000, 1); //ball
 	setState(1);
-	track(2200, 1, 1800, 1);
+	track(2775, 2, 2300, 1);
 
-	drive(1600, -360, 2000, 1, 1); //back away and turn
-	rotate(-420, 1000, 1);
+	//drive(1600, -360, 2000, 1, 1); //back away and turn
+	//rotate(-420, 1000, 1);
 
-	track(1500, 2, 1500, 1); //goal 4 + score
+	//track(1500, 2, 1500, 1); //goal 4 + score
 	setState(5);
-	pros::delay(850);
+	pros::delay(600);
 	setState(3);
 
-	drive(0, -420, 2000, 1, 1); //back out and release
+	drive(1200, -420, 2000, 1, 1); //back out and release
 	setState(4);
 	pros::delay(400);
 	setState(0);
 
-	rotate(-255, 1500, 1); //next ball
+	rotate(-268, 1500, 1); //next ball
 	setState(1);
-	trackDrive(1600, 1, 800, 1150, 1, 1);
+	trackDrive(1525, 1, 500, 1150, 1, 1);
 	//track(1600, 1, 1150, 1);
 
 	rotate(-360, 1500, 1); //turn to goal
 	track(1750, 2, 2800, 1);
 
 	setState(5); //score goal 5
-	pros::delay(800);
+	pros::delay(700);
 	setState(3);
 
-	drive(350, -360, 2000, 1, 1); //back out
+	drive(375, -360, 2000, 1, 1); //back out
 	setState(4);
 	pros::delay(400);
 	setState(0);
 
 	rotate(-300, 1500, 1); //go to goal 6
 	setState(1);
-	track(2800, 2, 3000, 1);
+	track(2850, 2, 3000, 1);
 
 	setState(5); //score goal 6
-	pros::delay(400);
+	pros::delay(500);
 	setState(3);
 
-	drive(1300, -300, 2000, 1, 1); //back out
+	drive(1325, -300, 2000, 1, 1); //back out
 	setState(4);
 	pros::delay(400);
 	setState(0);
 
 	rotate(-180, 1500, 1); //next ball
 	setState(1);
-	track(1700, 1, 1100, 1);
+	trackDrive(1800, 1, 800, 1300, 1, 1);
+	//track(1700, 1, 1100, 1);
 
-	rotate(-270, 1500, 1); //turn to and score goal
-	track(1500, 2, 2600, 1);
+	rotate(-265, 1500, 1); //turn to and score goal
+	track(1500, 1, 2600, 1);
 
 	setState(5); //score
 	pros::delay(700);
