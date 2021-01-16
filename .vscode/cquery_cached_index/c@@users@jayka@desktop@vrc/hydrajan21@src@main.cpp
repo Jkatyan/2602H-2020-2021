@@ -201,6 +201,9 @@ int intakeTask(){
 			case 7:
 				set_rollers(0, 127, 127);
 			break;
+			case 8:
+				set_rollers(-127, 0, 0);
+			break;
 			case -1:
 				continue;
 			break;
@@ -779,7 +782,7 @@ void autonomous() {
 	track(1625, 1, 1800, 1);
 
 	setState(5); //score
-	pros::delay(600);
+	pros::delay(375);
 	setState(3);
 
 /*
@@ -820,18 +823,18 @@ void autonomous() {
 	PART 5
 */
 
-	drive(1200, -375, 2000, 1, 1); //back out and release
+	drive(1500, -375, 2000, 1, 1); //back out and release
 	setState(0);
 
-	rotate(-267, 1500, 1); //next ball
+	rotate(-272, 1500, 1); //next ball
 	setState(1);
-	trackDrive(1800, 1, 500, 1400, 1, 1);
+	trackDrive(1900, 1, 500, 1400, 1, 1);
 
 	rotate(-360, 1500, 1); //turn to goal
 	track(1750, 2, 2800, 1);
 
 	setState(5); //score goal 5
-	pros::delay(600);
+	pros::delay(475);
 
 /*
 	█████████
@@ -846,10 +849,10 @@ void autonomous() {
 	PART 6
 */
 
-	drive(375, -360, 2000, 1, 1); //back out
+	drive(325, -360, 2000, 1, 1); //back out
 	setState(0);
 
-	rotate(-302, 1500, 1); //go to goal 6
+	rotate(-299, 1500, 1); //go to goal 6
 	setState(1);
 	track(2850, 2, 3000, 1);
 
@@ -870,7 +873,9 @@ void autonomous() {
 	PART 7
 */
 
-	driveSetState(1325, 4, -300, 2000, 1, 1); //back out
+	driveSetState(1300, 4, -300, 2000, 1, 1); //back out
+	setState(4); //score goal 6
+	pros::delay(500);
 	setState(0);
 
 	rotate(-180, 1500, 1); //next ball
@@ -881,7 +886,7 @@ void autonomous() {
 	track(1500, 2, 2600, 1);
 
 	setState(5); //score goal 7
-	pros::delay(500);
+	pros::delay(400);
 	setState(3);
 
 /*
@@ -900,7 +905,7 @@ void autonomous() {
 	drive(100, -270, 1500, 1, 1); //back out
 
 	setState(4); //release
-	pros::delay(200);
+	pros::delay(300);
 	setState(0);
 
 	rotate(-210, 1000, 1); //get ball
@@ -908,7 +913,7 @@ void autonomous() {
 	track(2970, 2, 2200, 1);
 
 	setState(5); //score goal 8
-	pros::delay(600);
+	pros::delay(500);
 	setState(3);
 
 /*
@@ -932,7 +937,17 @@ void autonomous() {
 
 	rotate(-90, 1000, 1); //ball
 	setState(1);
-	track(2775, 2, 2300, 1);
+	trackDrive(2775, 1, 1900, 2300, 1, 1);
+
+	rotate(49, 1000, 1); //descore goal
+	setState(8);
+	track(1200, 2, 1000, 1);
+	pros::delay(2000);
+
+	setState(5); //score
+	pros::delay(500);
+
+	drive(0, 45, 2000, 1, 1); //back out and release
 
 	pros::lcd::print(2, "%d", -enc.get_value());
 	pros::lcd::print(3, "%lf", imu.get_rotation());
