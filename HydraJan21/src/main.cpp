@@ -779,10 +779,10 @@ void autonomous() {
 	trackDrive(1300, 1, 400, 1200, 1, 1);
 
 	rotate(-452, 1050, 1); //go to goal 3
-	track(1625, 1, 1800, 1);
+	track(1650, 1, 1800, 1);
 
 	setState(5); //score
-	pros::delay(375);
+	pros::delay(385);
 	setState(3);
 
 /*
@@ -883,7 +883,7 @@ void autonomous() {
 	pros::delay(500);
 	setState(0);
 
-	rotate(-182, 1500, 1); //next ball
+	rotate(-183, 1500, 1); //next ball
 	setState(1);
 	trackDrive(1800, 1, 700, 1300, 1, 1);
 
@@ -891,7 +891,7 @@ void autonomous() {
 	track(1590, 2, 2600, 1);
 
 	setState(5); //score goal 7
-	pros::delay(420);
+	pros::delay(400);
 	setState(3);
 
 /*
