@@ -852,7 +852,7 @@ void autonomous() {
 	drive(325, -360, 2000, 1, 1); //back out
 	setState(0);
 
-	rotate(-299, 1500, 1); //go to goal 6
+	rotate(-297, 1500, 1); //go to goal 6
 	setState(1);
 	track(2850, 2, 3000, 1);
 
@@ -886,7 +886,7 @@ void autonomous() {
 	track(1500, 2, 2600, 1);
 
 	setState(5); //score goal 7
-	pros::delay(400);
+	pros::delay(500);
 	setState(3);
 
 /*
@@ -913,7 +913,7 @@ void autonomous() {
 	track(2970, 2, 2200, 1);
 
 	setState(5); //score goal 8
-	pros::delay(500);
+	pros::delay(550);
 	setState(3);
 
 /*
@@ -939,15 +939,17 @@ void autonomous() {
 	setState(1);
 	trackDrive(2775, 1, 1900, 2300, 1, 1);
 
-	rotate(49, 1000, 1); //descore goal
+	rotate(46, 1000, 1); //descore goal
 	setState(8);
 	track(1200, 2, 1000, 1);
 	pros::delay(2000);
 
-	setState(5); //score
-	pros::delay(500);
 
-	drive(0, 45, 2000, 1, 1); //back out and release
+	setState(5); //score
+	drive(2760, 46, 200, 1, 1); //back out and release
+	pros::delay(300);
+
+	drive(0, 46, 2000, 1, 1); //back out and release
 
 	pros::lcd::print(2, "%d", -enc.get_value());
 	pros::lcd::print(3, "%lf", imu.get_rotation());
