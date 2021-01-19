@@ -715,6 +715,8 @@ void autonomous() {
 	turnPID = pidInit (TURNP, 0, TURND, 0, 10.0, 99999, 99999);
 	anglePID = pidInit (ANGLEP, 0, 0, 0, 10.0, 99999, 99999);
 
+	reset_drive();
+
 /*
 	█████████
 	█░░░░░░░█
@@ -728,8 +730,7 @@ void autonomous() {
 	PART 1
 */
 
-	reset_drive(); //Start + goal 1
-	setState(5);
+	setState(5); //Goal 1
 	pros::delay(700);
 
 /*
@@ -773,7 +774,7 @@ void autonomous() {
 
 	driveSetState(-930, 4, -120, 1800, 1, 1); //back out
 
-	rotate(-345, 1250, 1); //face next ball
+	rotate(-343, 1250, 1); //face next ball
 	setState(1);
 
 	trackDrive(1300, 1, 400, 1200, 1, 1);
@@ -782,7 +783,7 @@ void autonomous() {
 	track(1650, 1, 1800, 1);
 
 	setState(5); //score
-	pros::delay(480);
+	pros::delay(420);
 	setState(3);
 
 /*
@@ -803,9 +804,9 @@ void autonomous() {
 	pros::delay(275);
 	setState(0);
 
-	rotate(-387, 1000, 1); //ball
+	rotate(-389, 1000, 1); //ball
 	setState(1);
-	trackDrive(2925, 2, 1700, 2300, 1, 1);
+	trackDrive(2935, 2, 1700, 2300, 1, 1);
 
 	setState(5); //score goal 4
 	pros::delay(635);
@@ -831,10 +832,10 @@ void autonomous() {
 
 	rotate(-272, 1500, 1); //next ball
 	setState(1);
-	trackDrive(1920, 1, 500, 1400, 1, 1);
+	trackDrive(1945, 1, 500, 1400, 1, 1);
 
 	rotate(-360, 1100, 1); //turn to goal
-	track(1750, 2, 1400, 1);
+	trackDrive(1775, 2, 1200, 1400, 1, 1);
 
 	setState(5); //score goal 5
 	pros::delay(550);
@@ -891,7 +892,7 @@ void autonomous() {
 	track(1590, 2, 2600, 1);
 
 	setState(5); //score goal 7
-	pros::delay(600);
+	pros::delay(500);
 	setState(3);
 
 /*
@@ -918,7 +919,7 @@ void autonomous() {
 	track(2990, 2, 2200, 1);
 
 	setState(5); //score goal 8
-	pros::delay(630);
+	pros::delay(610);
 	setState(3);
 
 /*
@@ -937,7 +938,7 @@ void autonomous() {
 	reset_drive();
 	drive(-1200, -210, 2000, 1, 1); //back out and release
 	setState(4);
-	pros::delay(525);
+	pros::delay(500);
 	setState(0);
 
 	rotate(-90, 1000, 1); //ball
@@ -947,11 +948,19 @@ void autonomous() {
 	rotate(45, 1000, 1); //descore goal
 	setState(8);
 	track(1200, 2, 1000, 1);
-	set_drive(0, 0);
-	pros::delay(2000);
+	set_drive(127, 127);
+	pros::delay(200);
+	set_drive(-60, -60);
+	pros::delay(150);
+	set_drive(127, 127);
+	pros::delay(300);
+	set_drive(-60, -60);
+	pros::delay(150);
+	set_drive(127, 127);
+	pros::delay(400);
 
 	setState(5); //score
-	pros::delay(1000);
+	pros::delay(1100);
 
 	set_drive(-127, -127);
 	pros::delay(500);
