@@ -774,7 +774,7 @@ void autonomous() {
 
 	driveSetState(-930, 4, -120, 1800, 1, 1); //back out
 
-	rotate(-343, 1250, 1); //face next ball
+	rotate(-342, 1250, 1); //face next ball
 	setState(1);
 
 	trackDrive(1300, 1, 400, 1200, 1, 1);
@@ -783,7 +783,7 @@ void autonomous() {
 	track(1650, 1, 1800, 1);
 
 	setState(5); //score
-	pros::delay(600);
+	pros::delay(530);
 	setState(3);
 
 /*
@@ -809,7 +809,7 @@ void autonomous() {
 	trackDrive(2940, 2, 1400, 2300, 1, 1);
 
 	setState(5); //score goal 4
-	pros::delay(635);
+	pros::delay(610);
 	setState(0);
 
 /*
@@ -827,7 +827,7 @@ void autonomous() {
 
 	drive(1500, -375, 1700, 1, 1); //back out and release
 	setState(4);
-	pros::delay(500);
+	pros::delay(525);
 	setState(0);
 
 	rotate(-272, 1500, 1); //next ball
@@ -860,7 +860,7 @@ void autonomous() {
 
 	rotate(-296, 800, 1); //go to goal 6
 	setState(1);
-	track(2850, 2, 2300, 1);
+	track(2880, 2, 2300, 1);
 
 	setState(5); //score goal 6
 	pros::delay(630);
@@ -961,6 +961,7 @@ void autonomous() {
 
 	setState(5); //score
 	pros::delay(1200);
+	set_drive(0, 0);
 
 	set_drive(-127, -127);
 	pros::delay(500);
