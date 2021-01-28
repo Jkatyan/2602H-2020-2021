@@ -35,9 +35,9 @@ const int auton = 0;
 #define DRIVED 0.01
 #define DRIVEF 9
 
-#define TURNP 0.3
-#define TURNI 0.73
-#define TURND 0.05
+#define TURNP 0.7
+#define TURNI 0
+#define TURND 0.01
 
 #define ANGLEP 3
 
@@ -718,11 +718,6 @@ void autonomous() {
 
 	reset_drive();
 
-	rotate(180, 3000, 1); //next ball
-	pros::lcd::print(2, "%d", -enc.get_value());
-	pros::lcd::print(3, "%lf", imu.get_rotation());
-	pros::delay(60000);
-
 /*
 	█████████
 	█░░░░░░░█
@@ -737,7 +732,7 @@ void autonomous() {
 */
 
 	setState(5); //Goal 1
-	pros::delay(700);
+	pros::delay(375);
 
 /*
 	█████████
@@ -758,11 +753,11 @@ void autonomous() {
 	reset_drive();
 
 	//drive(-900, -90, 1450, 1, 1); // Back up
-	rotate(-150, 700, 1); //Go to goal 2
+	rotate(-147, 700, 1); //Go to goal 2
 	track(1300, 2, 1325, 1);
 
 	setState(5); //score
-	pros::delay(650);
+	pros::delay(500);
 	setState(3);
 
 /*
@@ -780,16 +775,16 @@ void autonomous() {
 
 	driveSetState(-930, 4, -120, 1800, 1, 1); //back out
 
-	rotate(-342, 1250, 1); //face next ball
+	rotate(-340, 1250, 1); //face next ball
 	setState(1);
 
 	trackDrive(1300, 1, 400, 1200, 1, 1);
 
-	rotate(-452, 1050, 1); //go to goal 3
+	rotate(-450, 1050, 1); //go to goal 3
 	track(1650, 1, 1800, 1);
 
 	setState(5); //score
-	pros::delay(530);
+	pros::delay(400);
 	setState(3);
 
 /*
@@ -810,12 +805,12 @@ void autonomous() {
 	pros::delay(275);
 	setState(0);
 
-	rotate(-387, 1000, 1); //ball
+	rotate(-387, 900, 1); //ball
 	setState(1);
-	trackDrive(2940, 2, 1400, 2300, 1, 1);
+	trackDrive(3000, 2, 1400, 2300, 1, 1);
 
 	setState(5); //score goal 4
-	pros::delay(610);
+	pros::delay(450);
 	setState(0);
 
 /*
@@ -831,14 +826,14 @@ void autonomous() {
 	PART 5
 */
 
-	drive(1500, -375, 1700, 1, 1); //back out and release
+	drive(1525, -375, 1700, 1, 1); //back out and release
 	setState(4);
 	pros::delay(525);
 	setState(0);
 
-	rotate(-272, 1500, 1); //next ball
+	rotate(-270, 1300, 1); //next ball
 	setState(1);
-	trackDrive(1945, 1, 500, 1400, 1, 1);
+	trackDrive(2000, 1, 650, 1400, 1, 1);
 
 	rotate(-360, 1100, 1); //turn to goal
 	trackDrive(1775, 2, 1200, 1400, 1, 1);
