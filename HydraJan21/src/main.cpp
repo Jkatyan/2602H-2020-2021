@@ -732,7 +732,7 @@ void autonomous() {
 */
 
 	setState(5); //Goal 1
-	pros::delay(375);
+	pros::delay(350);
 
 /*
 	█████████
@@ -810,7 +810,7 @@ void autonomous() {
 	trackDrive(3000, 2, 1400, 2300, 1, 1);
 
 	setState(5); //score goal 4
-	pros::delay(450);
+	pros::delay(430);
 	setState(0);
 
 /*
@@ -839,7 +839,7 @@ void autonomous() {
 	trackDrive(1775, 2, 1200, 1400, 1, 1);
 
 	setState(5); //score goal 5
-	pros::delay(550);
+	pros::delay(500);
 	setState(0);
 /*
 	█████████
@@ -854,12 +854,12 @@ void autonomous() {
 	PART 6
 */
 
-	drive(325, -360, 1600, 1, 1); //back out
+	drive(375, -360, 1600, 1, 1); //back out
 	setState(4);
 	pros::delay(500);
 	setState(0);
 
-	rotate(-296, 800, 1); //go to goal 6
+	rotate(-293, 800, 1); //go to goal 6
 	setState(1);
 	track(2880, 2, 2300, 1);
 
@@ -893,9 +893,9 @@ void autonomous() {
 	track(1590, 2, 2600, 1);
 
 	setState(5); //score goal 7
-	pros::delay(500);
+	pros::delay(475);
 	setState(3);
-
+	pros::delay(55);
 /*
 	█████████
 	█░░░░░░░█
@@ -920,7 +920,7 @@ void autonomous() {
 	track(2990, 2, 2200, 1);
 
 	setState(5); //score goal 8
-	pros::delay(610);
+	pros::delay(540);
 	setState(3);
 
 /*
@@ -946,7 +946,7 @@ void autonomous() {
 	setState(1);
 	trackDrive(2775, 1, 500, 2300, 1, 1);
 
-	rotate(45, 1000, 1); //descore goal
+	rotate(43, 1000, 1); //descore goal
 	setState(8);
 	track(1200, 2, 1000, 1);
 	set_drive(127, 127);
@@ -955,7 +955,7 @@ void autonomous() {
 	pros::delay(150);
 	set_drive(127, 127);
 	pros::delay(300);
-	set_drive(-60, -60);
+	set_drive(-80, -80);
 	pros::delay(150);
 	set_drive(127, 127);
 	pros::delay(400);
