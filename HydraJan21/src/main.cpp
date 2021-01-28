@@ -31,12 +31,13 @@ const int auton = 0;
 #define VISION_PORT 21
 
 //CONSTANTS
-#define DRIVEP 0.09
+#define DRIVEP 0.087
 #define DRIVED 0.01
 #define DRIVEF 9
 
-#define TURNP 0.67
-#define TURND 0
+#define TURNP 0.3
+#define TURNI 0.73
+#define TURND 0.05
 
 #define ANGLEP 3
 
@@ -712,10 +713,15 @@ void competition_initialize() {}
 
 void autonomous() {
 	drivePID = pidInit (DRIVEP, 0, DRIVED, 0, 100.0, 5, 15);
-	turnPID = pidInit (TURNP, 0, TURND, 0, 10.0, 99999, 99999);
+	turnPID = pidInit (TURNP, TURNI, TURND, 0, 100.0, 5, 99999);
 	anglePID = pidInit (ANGLEP, 0, 0, 0, 10.0, 99999, 99999);
 
 	reset_drive();
+
+	rotate(180, 3000, 1); //next ball
+	pros::lcd::print(2, "%d", -enc.get_value());
+	pros::lcd::print(3, "%lf", imu.get_rotation());
+	pros::delay(60000);
 
 /*
 	█████████
