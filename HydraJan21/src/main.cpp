@@ -890,7 +890,7 @@ void autonomous() {
 	trackDrive(1800, 1, 550, 1300, 1, 1);
 
 	rotate(-273, 1100, 1); //turn to and score goal
-	track(1590, 2, 2600, 1);
+	track(1590, 2, 2100, 1);
 
 	setState(5); //score goal 7
 	pros::delay(475);
@@ -946,7 +946,7 @@ void autonomous() {
 	setState(1);
 	trackDrive(2775, 1, 500, 2300, 1, 1);
 
-	rotate(43, 1000, 1); //descore goal
+	rotate(41, 1000, 1); //descore goal
 	setState(8);
 	track(1200, 2, 1000, 1);
 	set_drive(127, 127);
