@@ -35,7 +35,7 @@ const int auton = 0;
 #define DRIVED 0.01
 #define DRIVEF 9
 
-#define TURNP 0.7
+#define TURNP 0.71
 #define TURNI 0
 #define TURND 0.01
 
@@ -731,9 +731,12 @@ void autonomous() {
 	PART 1
 */
 
-	setState(5); //Goal 1
+	setState(1);
+	pros::delay(350);
+	setState(2);
+	pros::delay(350);
+	setState(1);
 	pros::delay(650);
-
 /*
 	█████████
 	█░░░░░░░█
@@ -757,7 +760,7 @@ void autonomous() {
 	track(1300, 2, 1325, 1);
 
 	setState(5); //score
-	pros::delay(500);
+	pros::delay(475);
 	setState(3);
 
 /*
@@ -778,7 +781,7 @@ void autonomous() {
 	rotate(-340, 1250, 1); //face next ball
 	setState(1);
 
-	trackDrive(1300, 1, 400, 1200, 1, 1);
+	trackDrive(1310, 1, 400, 1200, 1, 1);
 
 	rotate(-450, 1050, 1); //go to goal 3
 	track(1650, 1, 1800, 1);
@@ -833,7 +836,7 @@ void autonomous() {
 
 	rotate(-270, 1300, 1); //next ball
 	setState(1);
-	trackDrive(2010, 1, 650, 1400, 1, 1);
+	trackDrive(2035, 1, 650, 1400, 1, 1);
 
 	rotate(-360, 1100, 1); //turn to goal
 	trackDrive(1775, 2, 1200, 1400, 1, 1);
@@ -859,9 +862,9 @@ void autonomous() {
 	pros::delay(500);
 	setState(0);
 
-	rotate(-293, 800, 1); //go to goal 6
+	rotate(-295, 800, 1); //go to goal 6
 	setState(1);
-	track(2880, 2, 2300, 1);
+	track(2890, 2, 2300, 1);
 
 	setState(5); //score goal 6
 	pros::delay(630);
@@ -894,8 +897,9 @@ void autonomous() {
 
 	setState(5); //score goal 7
 	pros::delay(475);
-	setState(3);
+	setState(1);
 	pros::delay(55);
+	setState(3);
 /*
 	█████████
 	█░░░░░░░█
@@ -912,15 +916,15 @@ void autonomous() {
 	drive(100, -270, 1500, 1, 1); //back out
 
 	setState(4); //release
-	pros::delay(300);
+	pros::delay(290);
 	setState(0);
 
 	rotate(-210, 1000, 1); //get ball
 	setState(1);
-	track(2990, 2, 2200, 1);
+	track(3000, 2, 2200, 1);
 
 	setState(5); //score goal 8
-	pros::delay(540);
+	pros::delay(510);
 	setState(3);
 
 /*
@@ -961,7 +965,7 @@ void autonomous() {
 	pros::delay(400);
 
 	setState(5); //score
-	pros::delay(1200);
+	pros::delay(1400);
 	set_drive(0, 0);
 
 	set_drive(-127, -127);
