@@ -1,5 +1,7 @@
 #include "main.h"
 
+//Thanks to 2011D for the help!
+
 //Constants
 #define LC 1 //Left Side Coefficient
 #define RC 1 //Right Side Coefficient
